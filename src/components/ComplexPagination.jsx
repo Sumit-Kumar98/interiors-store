@@ -1,0 +1,114 @@
+import React from "react";
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom";
+
+const ComplexPagination = () => {
+  const { meta } = useLoaderData();
+  const { pageCount, page } = meta.pagination;
+  //   console.log(`pageCount ${pageCount} , page ${page}`);
+
+  // const pages = Array.from({ length: pageCount }, (_, index) => {
+  //   return index + 1;
+  // });
+  //   const visiblePages = Array.from({ length: pageCount }, (_, i) => i + 1).slice(
+  //     Math.max(0, page - 3),
+  //     Math.min(page + 2, pageCount)
+  //   );
+
+  const { search, pathname } = useLocation();
+  const navigate = useNavigate();
+
+  const handlePageChange = (pageNumber) => {
+    const searchParams = new URLSearchParams(search);
+    searchParams.set("page", pageNumber);
+    navigate(`${pathname}?${searchParams.toString()}`);
+    // console.log(search);
+    // console.log(pathname);
+    // console.log(pageNumber);
+  };
+
+  const addPageButton = ({ pageNumber, activeClass }) => {
+    return (
+      <button
+        onClick={() => handlePageChange(pageNumber)}
+        key={pageNumber}
+        className={`btn btn-xs sm:btn-md border-none join-item ${
+          activeClass ? "bg-base-300" : "border-base-300"
+        }`}
+      >
+        {pageNumber}
+      </button>
+    );
+  };
+
+  const renderPageButtons = () => {
+    const pageButtons = [];
+    // first button
+    pageButtons.push(addPageButton({ pageNumber: 1, activeClass: page === 1 }));
+
+    // dots
+    if (page > 2) {
+      pageButtons.push(
+        <button className="join-item btn btn-xs sm:btn-md" key="dots-1">
+          ...
+        </button>
+      );
+    }
+
+    // active/currentPage
+    if (page !== 1 && page !== pageCount) {
+      pageButtons.push(addPageButton({ pageNumber: page, activeClass: true }));
+    }
+
+    // dots
+    if (page < pageCount - 1) {
+      pageButtons.push(
+        <button className="join-item btn btn-xs sm:btn-md" key="dots-2">
+          ...
+        </button>
+      );
+    }
+
+    // last button
+
+    pageButtons.push(
+      addPageButton({
+        pageNumber: pageCount,
+        activeClass: page === pageCount,
+      })
+    );
+
+    return pageButtons;
+  };
+
+  if (pageCount < 2) return null;
+
+  return (
+    <div className="mt-16 flex justify-end">
+      <div className="join">
+        <button
+          onClick={() => {
+            let prevPage = page - 1;
+            if (prevPage < 1) prevPage = pageCount;
+            handlePageChange(prevPage);
+          }}
+          className="btn btn-xs sm:btn-md join-item"
+        >
+          Prev
+        </button>
+        {renderPageButtons()}
+        <button
+          onClick={() => {
+            let nextPage = page + 1;
+            if (nextPage > pageCount) nextPage = 1;
+            handlePageChange(nextPage);
+          }}
+          className="btn btn-xs sm:btn-md join-item"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ComplexPagination;

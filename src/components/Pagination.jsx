@@ -5,9 +5,13 @@ const Pagination = () => {
   const { meta } = useLoaderData();
   const { pageCount, page } = meta.pagination;
 
-  const pages = Array.from({ length: pageCount }, (_, index) => {
-    return index + 1;
-  });
+  // const pages = Array.from({ length: pageCount }, (_, index) => {
+  //   return index + 1;
+  // });
+  const visiblePages = Array.from({ length: pageCount }, (_, i) => i + 1).slice(
+    Math.max(0, page - 3),
+    Math.min(page + 2, pageCount)
+  );
 
   const { search, pathname } = useLocation();
   const navigate = useNavigate();
@@ -36,7 +40,7 @@ const Pagination = () => {
         >
           Prev
         </button>
-        {pages.map((pageNumber) => {
+        {visiblePages.map((pageNumber) => {
           return (
             <button
               onClick={() => handlePageChange(pageNumber)}

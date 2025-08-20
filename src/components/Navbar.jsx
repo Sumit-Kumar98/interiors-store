@@ -3,31 +3,39 @@ import { BsCart3, BsMoonFill, BsSunFill } from "react-icons/bs";
 import { FaBarsStaggered } from "react-icons/fa6";
 import { NavLink } from "react-router-dom";
 import NavLinks from "./NavLinks";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleTheme } from "../features/user/userSlice";
 
-const themes = {
-  winter: "winter",
-  dracula: "dracula",
-};
+// const themes = {
+//   winter: "winter",
+//   dracula: "dracula",
+// };
 
-const getThemeFromLocalStorage = () => {
-  return localStorage.getItem("theme") || themes.winter;
-};
+// const getThemeFromLocalStorage = () => {
+//   return localStorage.getItem("theme") || themes.winter;
+// };
 
 const Navbar = () => {
-  const [theme, setTheme] = useState(getThemeFromLocalStorage());
+  // const [theme, setTheme] = useState(getThemeFromLocalStorage());
+  const {theme} = useSelector((state) => state.userState);
+
+  const dispatch = useDispatch();
 
   const handleTheme = () => {
-    const { winter, dracula } = themes;
+    // const { winter, dracula } = themes;
 
-    const newTheme = theme === "winter" ? dracula : winter;
+    // const newTheme = theme === "winter" ? dracula : winter;
     // document.documentElement.setAttribute("data-theme", theme);
-    setTheme(newTheme);
+    // setTheme(newTheme);
+    dispatch(toggleTheme());
   };
 
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+  // useEffect(() => {
+  //   document.documentElement.setAttribute("data-theme", theme);
+  //   localStorage.setItem("theme", theme);
+  // }, [theme]);
+
+  const numItemsInCart = useSelector((state) => state.cartState.numItemsInCart);
 
   return (
     <nav className="bg-base-200">
@@ -76,7 +84,7 @@ const Navbar = () => {
             <div className="indicator">
               <BsCart3 className="h-6 w-6" />
               <span className="badge badge-sm badge-primary indicator-item">
-                3
+                {numItemsInCart}
               </span>
             </div>
           </NavLink>
